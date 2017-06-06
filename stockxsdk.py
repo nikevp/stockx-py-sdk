@@ -62,27 +62,42 @@ class Stockx():
     def add_product_to_follow(self, product_id):
         command = '/portfolio?a=1001'
         payload = {
-            "timezone": "America/Chicago",
-            "PortfolioItem": {
-                "amount": 0,
-                "matchedWithDate": "",
-                "condition": "2000",
-                "skuUuid": product_id,
-                "action": 1001
+            'timezone': 'America/Chicago',
+            'PortfolioItem': {
+                'amount': 0,
+                'matchedWithDate': '',
+                'condition': '2000',
+                'skuUuid': product_id,
+                'action': 1001
             }
         }
         return self.__post(command, payload)
 
-    def add_product_to_portfolio(self, product_id, purchase_price, condition):
+    def add_product_to_portfolio(self, product_id, purchase_price, condition, purchase_date):
+        conditions = {
+            'new': 2000,
+            '9.5': 950,
+            '9': 900,
+            '8.5': 850,
+            '8': 800,
+            '7': 700,
+            '6': 600,
+            '5': 500,
+            '4': 400,
+            '3': 300,
+            '2': 200,
+            '1': 100
+        }
+        condition = conditions.get(condition, None)
         command = '/portfolio?a=1000'
         payload = {
-            "timezone": "America/Chicago",
-            "PortfolioItem": {
-                "amount": purchase_price,
-                "matchedWithDate": "2015-03-01T06:00:00+0000",
-                "condition": condition, # 2000 (NEW), 950, 900, 850, 800, 700, 600 ... 100
-                "skuUuid": product_id,
-                "action": "1000"
+            'timezone': 'America/Chicago',
+            'PortfolioItem': {
+                'amount': purchase_price,
+                'matchedWithDate': '{0}T06:00:00+0000'.format(purchase_date),
+                'condition': condition,
+                'skuUuid': product_id,
+                'action': '1000'
             }
         }
         return self.__post(command, payload)
@@ -133,24 +148,24 @@ class Stockx():
     def get_highest_bid(self, product_id):
         return self.get_bids(product_id)[0]
 
-    def create_ask(self, price, expires_at, product_id):
+    def create_ask(self, price, expiry_date, product_id):
         command = '/portfolio?a=ask'
         payload = {
-            "PortfolioItem": {
-                "amount": price,
-                "expiresAt": "2017-07-06T18:23:59+0000",
-                "skuUuid": product_id
+            'PortfolioItem': {
+                'amount': price,
+                'expiresAt': '{0}T06:00:00+0000'.format(expiry_date),
+                'skuUuid': product_id
             }
         }
         return self.__post(command, payload)
 
-    def update_ask(self, price, expires_at, ask_id):
+    def update_ask(self, price, expiry_date, ask_id):
         command = '/portfolio?a=ask'
         payload = {
-            "PortfolioItem": {
-                "amount": price,
-                "expiresAt": "2017-07-06T18:26:41+0000",
-                "chainId": ask_id
+            'PortfolioItem': {
+                'amount': price,
+                'expiresAt': '{0}T06:00:00+0000'.format(expiry_date),
+                'chainId': ask_id
             }
         }
         return self.__post(command, payload)
@@ -158,34 +173,34 @@ class Stockx():
     def cancel_ask(self, ask_id):
         command = '/portfolio/{0}'.format(ask_id)
         payload = {
-            "chain_id": ask_id,
-            "notes": "User Canceled Ask"
+            'chain_id': ask_id,
+            'notes': 'User Canceled Ask'
         }
         return self.__delete(command, payload)
 
-    def create_bid(self, price, expires_at, product_id):
+    def create_bid(self, price, expiry_date, product_id):
         command = '/portfolio?a=bid'
         payload = {
-            "PortfolioItem": {
-                "amount": price,
-                "expiresAt": "2017-07-06T18:28:36+0000",
-                "skuUuid": product_id,
-                "meta": {
-                    "sizePreferences": ""
+            'PortfolioItem': {
+                'amount': price,
+                'expiresAt': '{0}T06:00:00+0000'.format(expiry_date),
+                'skuUuid': product_id,
+                'meta': {
+                    'sizePreferences': ''
                 }
             }
         }
         return self.__post(command, payload)
 
-    def update_bid(self, price, expires_at, bid_id):
+    def update_bid(self, price, expiry_date, bid_id):
         command = '/portfolio?a=bid'
         payload = {
-            "PortfolioItem": {
-                "amount": price,
-                "expiresAt": "2017-07-06T18:29:07+0000",
-                "chainId": bid_id,
-                "meta": {
-                    "sizePreferences": ""
+            'PortfolioItem': {
+                'amount': price,
+                'expiresAt': '{0}T06:00:00+0000'.format(expiry_date),
+                'chainId': bid_id,
+                'meta': {
+                    'sizePreferences': ''
                 }
             }
         }
@@ -194,8 +209,8 @@ class Stockx():
     def cancel_bid(self, bid_id):
         command = '/portfolio/{0}'.format(bid_id)
         payload = {
-            "chain_id": bid_id,
-            "notes": "User Canceled Bid"
+            'chain_id': bid_id,
+            'notes': 'User Canceled Bid'
         }
         return self.__delete(command, payload)
     
@@ -207,7 +222,7 @@ class Stockx():
             'x-algolia-api-key': '6bfb5abee4dcd8cea8f0ca1ca085c2b3'
         }
         payload = {
-            "params": 'query={0}&hitsPerPage=20&facets=*'.format(query)
+            'params': 'query={0}&hitsPerPage=20&facets=*'.format(query)
         }
         return requests.post(endpoint, json=payload, params=params).json()['hits']
 
