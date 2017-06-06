@@ -73,7 +73,7 @@ class Stockx():
         }
         return self.__post(command, payload)
 
-    def add_product_to_portfolio(self, product_id, purchase_price, condition, purchase_date):
+    def add_product_to_portfolio(self, product_id, purchase_price, purchase_date, condition):
         conditions = {
             'new': 2000,
             '9.5': 950,
