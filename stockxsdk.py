@@ -132,18 +132,18 @@ class Stockx():
         command = '/products/{0}/related'.format(product_id)
         return self.__get(command)
 
-    def get_activity(self, product_id, activity_type):
+    def __get_activity(self, product_id, activity_type):
         command = '/products/{0}/activity?state={1}'.format(product_id, activity_type)
         return self.__get(command)
 
     def get_asks(self, product_id):
-        return self.get_activity(product_id, 400)
+        return self.__get_activity(product_id, 400)
 
     def get_lowest_ask(self, product_id):
         return self.get_asks(product_id)[0]
     
     def get_bids(self, product_id):
-        return self.get_activity(product_id, 300)
+        return self.__get_activity(product_id, 300)
 
     def get_highest_bid(self, product_id):
         return self.get_bids(product_id)[0]
