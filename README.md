@@ -1,43 +1,117 @@
 # stockx-py-sdk
 
-This is an unofficial StockX Python3 SDK. This is currently not unit tested and likely full of bugs. Do not use this SDK in production applications. Pull requests are welcome. Issues and requests for new features are welcome. SDK documentation will come as features are finished. 
+Stockx Python3 API Wrapper
 
-This SDK currently does not support accounts registered with Facebook or Twitter. StockX does not provide an official API, so tokens are retrieved by making a request to the `/login/` endpoint.
+## Notes
 
-Typical usage is 
+This is an *unofficial* StockX SDK for Python3. This project is currently *not* unit tested and is likely full of bugs. It not recommended to use this SDK in production applications unless you really know what you're doing. Pull requests, issues, and requests for features are welcome. SDK documentation will come as features are finished.
+
+This SDK does *not* (currently) support accounts registered with Facebook or Twitter.
+
+## Prerequisites
+
+You'll need to create an account on [StockX](https://stockx.com). Please make sure to register with an email+password (*not* Facebook or Twitter) at the moment.
+
+## Basic Usage
+
 ```python
 from stockxsdk import Stockx
+
 stockx = Stockx()
-stockx.authenticate('YOURUSERNAME', 'YOURPASSWORD')
-product_id = stockx.get_first_product('BB1234')['objectID']
+
+email = 'YOUR_EMAIL'
+password = 'YOUR_PASSWORD'
+stockx.authenticate(email, password)
+
+product_id = stockx.get_first_product_id('BB1234')
+
 highest_bid = stockx.get_highest_bid(product_id)
-print(highest_bid)
+print(highest_bid.shoe_size, highest_bid.order_price)
+
 lowest_ask = stockx.get_lowest_ask(product_id)
-print(lowest_ask)
+print(lowest_ask.shoe_size, lowest_ask.order_price)
 ```
 
-## TODO
+## SDK Documentation
 
-- Classes to abstract the StockX return values
-- Handling dates so they're usable
+### `stockx.authenticate`
 
+    stockx.authenticate(email, password)
 
-#### stockx.authenticate(email, password)
 Authenticates the SDK to make requests on your behalf. You must authenticate the SDK to retrieve info about your account or place new asks/bids.
 
-#### `stockx.me()`
-Returns information about your acount.
+#### Parameters
+1. `string` - Email for the account
+2. `string` - Password for the account
 
-#### `stockx.get_selling()`
-Returns information about what you're currently selling.
+#### Returns
+`bool` Success of the login operation
 
-#### `stockx.get_buying()`
-Returns information about what you're currently buying
+#### Example
+```python
+email = 'example@test.com'
+password = 'example123'
+logged_in = stockx.authenticate(email, password)
+print(logged_in) # `True`, hopefully
+```
 
-#### `stockx.get_rewards()`
+### `stockx.me`
+
+    stock.me()
+
+Returns information about your account.
+
+#### Parameters
+none
+
+#### Returns
+`Object` - Account info as a JSON object
+
+#### Example
+```python
+me = stock.me()
+print(me) # some huge JSON object
+```
+
+### `stockx.selling`
+
+    stockx.selling()
+
+Returns information about what you're currently selling (asks, pending, sold).
+
+#### Parameters
+none
+
+#### Returns
+`list<StockxItem>` - A list of StockxItem objects
+
+#### Example
+```python
+selling = stockx.selling()
+for item in selling:
+    print(item.item_type, item.item_id, item.item_price)
+```
+
+#### `stockx.buying()`
+Returns information about what you're currently buying (bids, pending, bought).
+
+#### Parameters
+none
+
+#### Returns
+`list<StockxItem>` - A list of StockxItem objects
+
+#### Example
+```python
+buying = stockx.buying()
+for item in buying:
+    print(item.item_type, item.item_id, item.item_price)
+```
+
+#### `stockx.rewards()`
 Returns information about your seller level
 
-#### `stockx.get_stats()`
+#### `stockx.stats()`
 Returns buying and selling statistics about your account
 
 #### `stockx.get_cop_list()`
