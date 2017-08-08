@@ -64,19 +64,22 @@ class Stockx():
         return [StockxItem(item_json) for item_json in response['PortfolioItems']]
 
     def buying(self):
-        command = '/users/me/buying'
-        return self.__get(command)
+        command = '/customers/{0}/buying'.format(self.customer_id)
+        response = self.__get(command)
+        return [StockxItem(item_json) for item_json in response['PortfolioItems']]
 
     def rewards(self):
-        command = '/users/me/rewards'
+        command = '/customers/{0}/rewards'.format(self.customer_id)
         return self.__get(command)
 
     def stats(self):
-        command = '/customers/{0}/stats'.format(self.customer_id)
+        command = '/customers/{0}/collection/stats'.format(self.customer_id)
+        return self.__get(command)
 
     def cop_list(self):
         command = '/customers/{0}/cop-list'.format(self.customer_id)
-        return self.__get(command)
+        response = self.__get(command)
+        return [StockxItem(item_json) for item_json in response['PortfolioItems']]
 
     def add_product_to_follow(self, product_id):
         command = '/portfolio?a=1001'

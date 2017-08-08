@@ -55,6 +55,7 @@ logged_in = stockx.authenticate(email, password)
 print(logged_in) # `True`, hopefully
 ```
 
+
 ### `stockx.me`
 
     stock.me()
@@ -72,6 +73,7 @@ none
 me = stock.me()
 print(me) # some huge JSON object
 ```
+
 
 ### `stockx.selling`
 
@@ -92,7 +94,11 @@ for item in selling:
     print(item.item_type, item.item_id, item.item_price)
 ```
 
-#### `stockx.buying()`
+
+### `stockx.buying`
+
+    stockx.buying()
+
 Returns information about what you're currently buying (bids, pending, bought).
 
 #### Parameters
@@ -108,14 +114,63 @@ for item in buying:
     print(item.item_type, item.item_id, item.item_price)
 ```
 
-#### `stockx.rewards()`
-Returns information about your seller level
 
-#### `stockx.stats()`
-Returns buying and selling statistics about your account
+### `stockx.rewards`
 
-#### `stockx.get_cop_list()`
-Returns your current cop list
+    stockx.rewards()
+
+Returns information about your seller level as a JSON object
+
+#### Parameters
+none
+
+#### Returns
+`Object` - Seller level info as a JSON object
+
+#### Example
+```python
+rewards = stockx.rewards()
+print(rewards) # some JSON object
+```
+
+
+### `stockx.stats`
+
+    stockx.stats()
+
+Returns statistics about your collection as a JSON object
+
+#### Parameters
+none
+
+#### Returns
+`Object` - User stats as a JSON object
+
+#### Example
+```python
+stats = stockx.stats()
+print(stats) # some JSON object
+```
+
+#### `stockx.cop_list`
+
+    stockx.cop_list()
+
+Returns your current cop list as a list of StockxItem objects
+
+#### Parameters
+none
+
+#### Returns
+`List<StockxItem>` - Current coplist as list of StockxItem objects
+
+#### Example
+```python
+cop_list = stockx.cop_list()
+for item in cop_list:
+    print(item.item_type, item.item_id, item.item_price)
+```
+
 
 #### `stockx.add_product_to_follow(product_id)`
 Adds a new product to your cop list
