@@ -69,7 +69,7 @@ class Stockx():
         return [StockxItem(item_json) for item_json in response['PortfolioItems']]
 
     def rewards(self):
-        command = '/customers/{0}/rewards'.format(self.customer_id)
+        command = '/users/me/rewards'
         return self.__get(command)
 
     def stats(self):
@@ -203,6 +203,8 @@ class Stockx():
             }
         }
         response = self.__post(command, payload)
+        if response.get('error', None):
+            raise ValueError(json.loads(response['message']['description']))
         return response['PortfolioItem']['chainId']
 
     def update_bid(self, bid_id, new_price, expiry_date=None):
@@ -245,4 +247,4 @@ class Stockx():
         return requests.post(endpoint, json=payload, params=params).json()['hits']
 
     def get_first_product_id(self, query):
-        return self.search(query)[0]['ObjectID']
+        return self.search(query)[0]['objectID']
