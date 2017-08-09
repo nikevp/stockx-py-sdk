@@ -1,0 +1,695 @@
+stockx-py-sdk
+=============
+
+Stockx Python3 API Wrapper
+
+Notes
+-----
+
+This is an *unofficial* StockX SDK for Python3. This project is
+currently *not* unit tested and is likely full of bugs. It not
+recommended to use this SDK in production applications unless you really
+know what you're doing. Pull requests, issues, and requests for features
+are welcome. SDK documentation will come as features are finished.
+
+This SDK does *not* (currently) support accounts registered with
+Facebook or Twitter.
+
+Prerequisites
+-------------
+
+You'll need to create an account on `StockX <https://stockx.com>`__.
+Please make sure to register with an email+password (*not* Facebook or
+Twitter) at the moment.
+
+Basic Usage
+-----------
+
+.. code:: python
+
+    from stockxsdk import Stockx
+
+    stockx = Stockx()
+
+    email = 'YOUR_EMAIL'
+    password = 'YOUR_PASSWORD'
+    stockx.authenticate(email, password)
+
+    product_id = stockx.get_first_product_id('BB1234')
+
+    highest_bid = stockx.get_highest_bid(product_id)
+    print(highest_bid.shoe_size, highest_bid.order_price)
+
+    lowest_ask = stockx.get_lowest_ask(product_id)
+    print(lowest_ask.shoe_size, lowest_ask.order_price)
+
+SDK Documentation
+-----------------
+
+``stockx.authenticate``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.authenticate(email, password)
+
+Authenticates the SDK to make requests on your behalf. You must
+authenticate the SDK to retrieve info about your account or place new
+asks/bids.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Email for the account
+2. ``string`` - Password for the account
+
+Returns
+^^^^^^^
+
+``bool`` Success of the login operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    email = 'example@test.com'
+    password = 'example123'
+    logged_in = stockx.authenticate(email, password)
+    print(logged_in) # `True`, hopefully
+
+``stockx.me``
+~~~~~~~~~~~~~
+
+::
+
+    stock.me()
+
+Returns information about your account.
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``Object`` - Account info as a JSON object
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    me = stock.me()
+    print(me) # some huge JSON object
+
+``stockx.selling``
+~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.selling()
+
+Returns information about what you're currently selling (asks, pending,
+sold).
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``list<StockxItem>`` - A list of StockxItem objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    selling = stockx.selling()
+    for item in selling:
+        print(item.item_type, item.item_id, item.item_price)
+
+``stockx.buying``
+~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.buying()
+
+Returns information about what you're currently buying (bids, pending,
+bought).
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``list<StockxItem>`` - A list of StockxItem objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    buying = stockx.buying()
+    for item in buying:
+        print(item.item_type, item.item_id, item.item_price)
+
+``stockx.rewards``
+~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.rewards()
+
+Returns information about your seller level as a JSON object
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``Object`` - Seller level info as a JSON object
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    rewards = stockx.rewards()
+    print(rewards) # some JSON object
+
+``stockx.stats``
+~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.stats()
+
+Returns statistics about your collection as a JSON object
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``Object`` - User stats as a JSON object
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    stats = stockx.stats()
+    print(stats) # some JSON object
+
+``stockx.cop_list``
+~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.cop_list()
+
+Returns your current cop list as a list of StockxItem objects
+
+Parameters
+^^^^^^^^^^
+
+none
+
+Returns
+^^^^^^^
+
+``List<StockxItem>`` - Current coplist as list of StockxItem objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    cop_list = stockx.cop_list()
+    for item in cop_list:
+        print(item.item_type, item.item_id, item.item_price)
+
+``stockx.add_product_to_follow``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.add_product_to_follow(product_id)
+
+Adds a new product to your cop list. ``product_id`` *must* be the ID of
+a specific size.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID of product to follow
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    size_id = '36f86e69-9d4f-4b82-94a2-d85b4e7fd370'
+    followed = stockx.add_product_to_follow(size_id)
+    print(followed) # True, hopefully
+
+``stockx.add_product_to_portfolio``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.add_product_to_portfolio(product_id, purchase_price, condition='new', purchase_date=None)
+
+Adds a new product to your portfolio. ``purchase_date`` is a standard
+``YYYY-MM-DD`` string and defaults to today's date. ``condition`` is one
+of: ``new``, ``9.5``, ``9``, ``8.5``, ``8``, ``7``, ``6``, ``5``, ``4``,
+``3``, ``2``, ``1`` and defaults to ``new``.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID of product to add to portfolio
+2. ``number`` - Price of product at purchase
+3. ``string`` - Condition of product
+4. ``string`` - Purchase date of product
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    size_id = '36f86e69-9d4f-4b82-94a2-d85b4e7fd370'
+    added = stockx.add_product_to_collection(size_id)
+    print(added) # True, hopefully
+
+``stockx.get_product``
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_product(product_id)
+
+Returns the full StockX product object given a StockX product id
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID of product to get
+
+Returns
+^^^^^^^
+
+``StockxProduct`` - The product with that ID
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = '2c91a3dc-4ba6-40bc-af0b-a259f793a223'
+    product = stockx.get_product(product_id)
+    print(product.title) # 'Adidas EQT Support 93/17 Core Black Turbo'
+
+``stockx.get_asks``
+~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_asks(product_id)
+
+Returns a list of all 'Ask' ``StockxOrder`` objects for a given product
+ID
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID
+
+Returns
+^^^^^^^
+
+``List<StockxOrder>`` - List of 'Ask' ``StockxOrder`` objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = '2c91a3dc-4ba6-40bc-af0b-a259f793a223'
+    asks = stockx.get_asks(product_id)
+    for ask in asks:
+        print(ask.shoe_size, ask.order_price)
+
+``stockx.get_lowest_ask``
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_lowest_ask(product_id)
+
+Returns the lowest ask for a given product as a ``StockxOrder`` object
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID
+
+Returns
+^^^^^^^
+
+``StockxOrder`` - Lowest ask as a ``StockxOrder``
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = '2c91a3dc-4ba6-40bc-af0b-a259f793a223'
+    lowest_ask = stockx.get_lowest_ask(product_id)
+    print(ask.shoe_size, ask.order_price)
+
+``stockx.get_bids``
+~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_bids(product_id)
+
+Returns a list of all 'Bid' ``StockxOrder`` objects for a given product
+ID
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID
+
+Returns
+^^^^^^^
+
+``List<StockxOrder>`` - List of 'Bid' ``StockxOrder`` objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = '2c91a3dc-4ba6-40bc-af0b-a259f793a223'
+    bids = stockx.get_bids(product_id)
+    for bid in bids:
+        print(bid.shoe_size, bid.order_price)
+
+``stockx.get_highest_bid``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_highest_bid(product_id)
+
+Returns the highest bid for a given product as a ``StockxOrder`` object
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID
+
+Returns
+^^^^^^^
+
+``StockxOrder`` - highest bid as a ``StockxOrder``
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = '2c91a3dc-4ba6-40bc-af0b-a259f793a223'
+    highest_bid = stockx.get_highest_bid(product_id)
+    print(bid.shoe_size, bid.order_price)
+
+``stockx.create_ask``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.create_ask(product_id, price, expiry_date=None)
+
+Creates a new ask for a product at a given price to expire at a given
+date. Expiry date is a standard ``YYYY-MM-DD`` string and defaults to
+now+30 days.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Product ID
+2. ``number`` - Price in USD
+3. ``expiry_date`` - Ask expiry date; defaults to now+30 days
+
+Returns
+^^^^^^^
+
+``string`` - Ask ID
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    size_id = '36f86e69-9d4f-4b82-94a2-d85b4e7fd370'
+    ask_id = stockx.create_ask(size_id, 300)
+    print(ask_id) # Some string
+
+``stockx.update_ask``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.update_ask(ask_id, new_price, expiry_date=None)
+
+Updates an ask for a product at a given price to expire at a given date.
+Expiry date is a standard ``YYYY-MM-DD`` string and defaults to now+30
+days. ``ask_id`` is the ``item_id`` for that ask returned by
+``stockx.selling()``.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Ask ID
+2. ``number`` - New price for the ask
+3. ``expiry_date`` - Ask expiry date, defaults to now+30 days
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    ask_id = '12489999967982049999'
+    updated = stockx.update_ask(ask_id, 400)
+    print(updated) # True, hopefully
+
+``stockx.cancel_ask``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.cancel_ask(ask_id)
+
+Cancels an ask for a product. ``ask_id`` is the ``item_id`` for that ask
+returned by ``stockx.buying()``.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Ask ID
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    ask_id = '12489999967982049999'
+    cancelled = stockx.cancel_ask(ask_id)
+    print(cancelled) # True, hopefully
+
+``stockx.create_bid``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.create_bid(product_id, price, expiry_date)
+
+Creates a new bid for a product at a given price to expire at a given
+date. Expiry date is a standard ``YYYY-MM-DD`` string and defaults to
+now+30 days.
+
+Parameters
+^^^^^^^^^^
+
+``string`` - Product ID ``number`` - Price in USD ``expiry_date`` - Bid
+expiry date, defaults to now+30 days
+
+Returns
+^^^^^^^
+
+``string`` - Bid ID
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    size_id = '36f86e69-9d4f-4b82-94a2-d85b4e7fd370'
+    bid_id = stockx.create_bid(size_id, 300)
+    print(bid_id) # Some string
+
+``stockx.update_bid``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.update_bid(bid_id, new_price, expiry_date=None)
+
+Updates an bid for a product at a given price to expire at a given date.
+Expiry date is a standard ``YYYY-MM-DD`` string and defaults to now+30
+days. ``bid_id`` is the ``item_id`` for that bid returned by
+``stockx.buying()``.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Bid ID
+2. ``number`` - New price for the bid
+3. ``expiry_date`` - Bid expiry date, defaults to now+30 days
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    bid_id = '12489999967982049999'
+    updated = stockx.update_bid(bid_id, 400)
+    print(updated) # True, hopefully
+
+``stockx.cancel_bid``
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.cancel_bid(bid_id)
+
+Cancels an bid for a product. ``bid_id`` is the ``item_id`` for that bid
+returned by ``stockx.selling()``.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - Bid ID
+
+Returns
+^^^^^^^
+
+``bool`` - Success of the operation
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    bid_id = '12489999967982049999'
+    cancelled = stockx.cancel_bid(bid_id)
+    print(cancelled) # True, hopefully
+
+``stockx.search``
+~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.search(query)
+
+Searches StockX for a given query. Returns the first 20 matches.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - The query to search for
+
+Returns
+^^^^^^^
+
+``List<Object>`` - A list of JSON response objects
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    hits = stockx.search('BB1234')
+    for hit in hits:
+        print(hit) # Some huge JSON object
+
+``stockx.get_first_product_id``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    stockx.get_first_product_id(query)
+
+Returns the first product ID for a given query.
+
+Parameters
+^^^^^^^^^^
+
+1. ``string`` - The query to search for
+
+Returns
+^^^^^^^
+
+``string`` - ID of the first product returned
+
+Example
+^^^^^^^
+
+.. code:: python
+
+    product_id = stockx.get_first_product_id('BB1234')
+    print(product_id) # '2c91a3dc-4ba6-40bc-af0b-a259f793a223'

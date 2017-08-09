@@ -93,7 +93,9 @@ class Stockx():
                 'action': 1001
             }
         }
-        return self.__post(command, payload)
+        response = self.__post(command, payload)
+        success = response['PortfolioItem']['text'] == 'Following'
+        return success
 
     def add_product_to_portfolio(self, product_id, purchase_price, condition='new', purchase_date=None):
         purchase_price = purchase_price or now()
@@ -123,38 +125,14 @@ class Stockx():
                 'action': '1000'
             }
         }
-        return self.__post(command, payload)
+        response = self.__post(command, payload)
+        success = response['PortfolioItem']['text'] == 'In Portfolio'
+        return success
         
     def get_product(self, product_id):
         command = '/products/{0}'.format(product_id)
         product_json = self.__get(command)
         return StockxProduct(product_json)
-
-    def get_all_sorts(self):
-        command = '/products/sorts?all=true'
-        return self.__get(command)
-
-    def get_all_filters(self):
-        command = '/products/filters?all=true'
-        return self.__get(command)
-
-    def __browse(self, params):
-        command = '/browse/'
-        return self.__get(command, params)
-
-    def get_new_releases(self):
-        params = {
-            'page': 1,
-            'limit': 1000,
-            'category': 152,
-            'focus': 'new_releases',
-            'release_date': datetime.datetime.now().strftime('%y-%m-%d')
-        }
-        return self.__browse(params)
-
-    def get_related_products(self, product_id):
-        command = '/products/{0}/related'.format(product_id)
-        return self.__get(command)
 
     def __get_activity(self, product_id, activity_type):
         command = '/products/{0}/activity?state={1}'.format(product_id, activity_type)
@@ -264,7 +242,7 @@ class Stockx():
         payload = {
             'params': 'query={0}&hitsPerPage=20&facets=*'.format(query)
         }
-        return [hit['objectID'] for hit in requests.post(endpoint, json=payload, params=params).json()['hits']]
+        return requests.post(endpoint, json=payload, params=params).json()['hits']
 
     def get_first_product_id(self, query):
-        return self.search(query)[0]
+        return self.search(query)[0]['ObjectID']
