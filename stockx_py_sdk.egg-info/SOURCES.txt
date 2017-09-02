@@ -1,0 +1,15 @@
+LICENSE.txt
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+stockx_py_sdk.egg-info/PKG-INFO
+stockx_py_sdk.egg-info/SOURCES.txt
+stockx_py_sdk.egg-info/dependency_links.txt
+stockx_py_sdk.egg-info/requires.txt
+stockx_py_sdk.egg-info/top_level.txt
+stockxsdk/__init__.py
+stockxsdk/item.py
+stockxsdk/order.py
+stockxsdk/product.py
+stockxsdk/wrapper.py
