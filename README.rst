@@ -22,6 +22,15 @@ You'll need to create an account on `StockX <https://stockx.com>`__.
 Please make sure to register with an email+password (*not* Facebook or
 Twitter) at the moment.
 
+Installation
+------------
+
+You can install this package with ``pip``:
+
+::
+
+    $ pip install stockxsdk
+
 Basic Usage
 -----------
 
