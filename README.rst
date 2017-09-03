@@ -29,7 +29,7 @@ You can install this package with ``pip``:
 
 ::
 
-    $ pip install stockxsdk
+    $ pip install stockx-py-sdk==0.0.2
 
 Basic Usage
 -----------
